@@ -1,10 +1,5 @@
 pipeline {
 
-  environment {
-    dockerimagename = "shekharrr/nodeapp:v1"
-    dockerImage = ""
-  }
-
   agent any
 
   stages {
@@ -18,7 +13,7 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker.build dockerimagename
+          dockerImage = docker build -t shekharrr .
         }
       }
     }
