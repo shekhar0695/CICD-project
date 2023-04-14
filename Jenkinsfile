@@ -1,7 +1,7 @@
 pipeline {
 
   environment {
-    dockerimagename = "shekharrr/nodeapp:latest"
+    dockerimagename = "shekharrr/nodeapp:v1"
     dockerImage = ""
   }
 
@@ -11,7 +11,7 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/shekhar0695/maven.git'
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/shekhar0695/CICD-project.git']])
       }
     }
 
@@ -24,13 +24,10 @@ pipeline {
     }
 
     stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhublogin'
-           }
       steps{
         script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
+          withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub-pwd')]) {
+                   sh 'docker login -u shekharrr -p ${dockerhub-pwd}'
           }
         }
       }
@@ -39,7 +36,7 @@ pipeline {
     stage('Deploying App to Kubernetes') {
       steps {
         script {
-          kubernetesDeploy(configs: "deployment-service.yml", kubeconfigId: "kubernetes")
+          kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "kubernetes")
         }
       }
     }
