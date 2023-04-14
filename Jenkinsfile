@@ -13,7 +13,7 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker build -t shekharrr .
+          dockerImage = docker build -t shekharrr
         }
       }
     }
